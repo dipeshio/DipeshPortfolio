@@ -6,9 +6,13 @@
     --text: #F8FAFC;         /* White text */
     --text-secondary: #94A3B8; /* Muted text */
     --accent: #F472B6;       /* Accent */
-    --pixel-size: 1px;       /* Smaller pixel size */
+    --pixel-size: 4px;       /* Smaller pixel size */
     --header-height: 56px;   /* Smaller header */
     --container-width: 900px; /* Smaller max width */
+}
+
+[data-active="false"] {
+    display: none;
 }
 
 /* Base Styles */
@@ -17,14 +21,21 @@
     padding: 0;
     box-sizing: border-box;
 }
+@font-face {
+    font-family: "minecraft-font";
+    src: url('./minecraft-font/MinecraftRegular-Bmg3.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
 
 body {
-    font-family: 'Press Start 2P', system-ui, sans-serif;
+    font-family: "minecraft-font", system-ui, sans-serif;
     background-color: var(--background);
     color: var(--text);
     line-height: 1.6;
     font-size: 13px;
 }
+
 
 /* Minimal Header */
 .pixel-header {
@@ -95,7 +106,7 @@ body {
 }
 
 .subtitle {
-    font-size: 0.8rem;
+    font-size:1.2rem;
     color: var(--text-secondary);
     margin-bottom: 2rem;
 }
@@ -113,7 +124,7 @@ body {
 }
 
 .about-text p {
-    font-size: 0.85rem;
+    font-size: 1.25rem;
     line-height: 1.7;
     color: var(--text-secondary);
     margin-bottom: 1.5rem;
@@ -228,7 +239,7 @@ body {
 }
 
 .project-title {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: var(--text);
 }
 
@@ -241,7 +252,7 @@ body {
 }
 
 .project-description {
-    font-size: 0.8rem;
+    font-size: 1rem;
     line-height: 1.6;
     color: var(--text-secondary);
     margin-bottom: 1.5rem;
@@ -359,7 +370,7 @@ textarea.form-input {
 }
 
 .contact-alternatives h3 {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: var(--text);
     margin-bottom: 1rem;
 }
@@ -376,7 +387,7 @@ textarea.form-input {
     gap: 0.5rem;
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     transition: color 0.2s ease;
 }
 
@@ -484,4 +495,4 @@ textarea.form-input {
 
 .skip-to-main:focus {
     top: 0;
-} 
+}

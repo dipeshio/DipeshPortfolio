@@ -171,4 +171,21 @@ function initFloatingAnimation(element, delay = 0) {
 // Apply floating animation to decorative elements
 document.querySelectorAll('.pixel-star, .pixel-cube').forEach((element, index) => {
     initFloatingAnimation(element, index * 500);
-}); 
+});
+
+// toggling the data-active attribute on the project cards
+function toggleActive(element) {
+    const isActive = element.getAttribute('data-active') === 'true';
+    element.setAttribute('data-active', !isActive);
+    updateVisibility(element);
+}
+
+function updateVisibility(element) {
+    if (element.getAttribute('data-active') === 'true') {
+        element.style.display = 'block';
+    } else {
+        element.style.display = 'none';
+    }
+}
+
+// Example usage: toggleActive(document.querySelector('.project-card'));
