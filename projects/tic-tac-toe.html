@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe | Dipper's Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .game-container {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 8px;
+            margin: 2rem 0;
+            width: 300px;
+            height: 300px;
+            max-width: 100%;
+        }
+
+        .cell {
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            aspect-ratio: 1;
+            min-height: 80px;
+        }
+
+        .cell:hover {
+            border-color: #000;
+            background: #f0f0f0;
+        }
+
+        .cell.x {
+            color: #e74c3c;
+        }
+
+        .cell.o {
+            color: #3498db;
+        }
+
+        .cell.winner {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .game-status {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 1rem 0;
+            min-height: 24px;
+        }
+
+        .reset-btn, .back-btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+            margin: 0.5rem;
+        }
+
+        .reset-btn:hover, .back-btn:hover {
+            opacity: 0.9;
+        }
+
+        .score {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .score div {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .current-player {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .x-turn { color: #e74c3c; }
+        .o-turn { color: #3498db; }
+
+        .game-mode {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            background: #f0f0f0;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: #e0e0e0;
+        }
+
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .game-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .game-popup {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 300px;
+            width: 90%;
+            border: 2px solid #e0e0e0;
+        }
+
+        .popup-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .popup-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .popup-btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .popup-btn:hover {
+            opacity: 0.9;
+        }
+
+        .popup-btn.secondary {
+            background: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Tic-Tac-Toe</h1>
+        <p>Classic strategy game for two players</p>
+    </div>
+
+    <div class="game-container">
+        <div class="score">
+            <div>Player X: <span id="x-score">0</span></div>
+            <div>Player O: <span id="o-score">0</span></div>
+        </div>
+
+        <div class="game-mode">
+            <button class="mode-btn active" id="pvp-mode" onclick="setGameMode('pvp')">Player vs Player</button>
+            <button class="mode-btn" id="ai-mode" onclick="setGameMode('ai')">vs AI</button>
+        </div>
+
+        <div class="current-player" id="current-player">
+            Player <span class="x-turn">X</span>'s turn
+        </div>
+
+        <div class="game-board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <div class="game-status" id="status"></div>
+
+        <button class="reset-btn" onclick="resetGame()">New Game</button>
+        <button class="back-btn" onclick="goHome()">← Back to Portfolio</button>
+
+        <div class="game-overlay" id="gameOverlay">
+            <div class="game-popup">
+                <div class="popup-title" id="popupTitle">Game Over!</div>
+                <div class="popup-message" id="popupMessage">Player X wins!</div>
+                <div class="popup-buttons">
+                    <button class="popup-btn" onclick="resetGame(); hideGameOverlay();">Play Again</button>
+                    <button class="popup-btn secondary" onclick="goHome()">Quit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let scores = { X: 0, O: 0 };
+        let gameMode = 'pvp'; // 'pvp' or 'ai'
+        let aiThinking = false;
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+            [0, 4, 8], [2, 4, 6] // diagonals
+        ];
+
+        function makeMove(index) {
+            if (board[index] !== '' || !gameActive || aiThinking) return;
+
+            board[index] = currentPlayer;
+            document.querySelector(`[data-index="${index}"]`).textContent = currentPlayer;
+            document.querySelector(`[data-index="${index}"]`).classList.add(currentPlayer.toLowerCase());
+
+            if (checkWin()) {
+                const winner = gameMode === 'ai' && currentPlayer === 'O' ? 'AI' : `Player ${currentPlayer}`;
+                document.getElementById('status').textContent = `${winner} wins!`;
+                scores[currentPlayer]++;
+                updateScore();
+                highlightWinningCells();
+                gameActive = false;
+                showGameOverlay(winner + ' wins!', winner === 'AI' ? '🤖 Better luck next time!' : '🎉 Congratulations!');
+                return;
+            }
+
+            if (board.every(cell => cell !== '')) {
+                document.getElementById('status').textContent = "It's a tie!";
+                gameActive = false;
+                showGameOverlay('It\'s a Tie!', '🤝 Great game! Try again?');
+                return;
+            }
+
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            updateCurrentPlayer();
+
+            // AI move if in AI mode and it's O's turn
+            if (gameMode === 'ai' && currentPlayer === 'O' && gameActive) {
+                aiThinking = true;
+                setTimeout(() => {
+                    makeAIMove();
+                    aiThinking = false;
+                }, 500); // Small delay to make AI moves visible
+            }
+        }
+
+        function checkWin() {
+            return winningConditions.some(condition => {
+                const [a, b, c] = condition;
+                return board[a] && board[a] === board[b] && board[a] === board[c];
+            });
+        }
+
+        function highlightWinningCells() {
+            winningConditions.forEach(condition => {
+                const [a, b, c] = condition;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    [a, b, c].forEach(index => {
+                        document.querySelector(`[data-index="${index}"]`).classList.add('winner');
+                    });
+                }
+            });
+        }
+
+        function updateCurrentPlayer() {
+            const playerDisplay = document.getElementById('current-player');
+            if (currentPlayer === 'X') {
+                playerDisplay.innerHTML = 'Player <span class="x-turn">X</span>\'s turn';
+            } else {
+                if (gameMode === 'ai') {
+                    playerDisplay.innerHTML = '<span class="o-turn">AI</span>\'s turn';
+                } else {
+                    playerDisplay.innerHTML = 'Player <span class="o-turn">O</span>\'s turn';
+                }
+            }
+        }
+
+        function setGameMode(mode) {
+            gameMode = mode;
+            document.getElementById('pvp-mode').classList.toggle('active', mode === 'pvp');
+            document.getElementById('ai-mode').classList.toggle('active', mode === 'ai');
+            
+            // Update score labels
+            const oScoreLabel = document.querySelector('#o-score').parentElement;
+            oScoreLabel.innerHTML = `${mode === 'ai' ? 'AI' : 'Player O'}: <span id="o-score">${scores.O}</span>`;
+            
+            resetGame();
+        }
+
+        function makeAIMove() {
+            if (!gameActive || currentPlayer !== 'O') return;
+
+            const bestMove = getBestMove();
+            if (bestMove !== -1) {
+                // Directly update the board for AI move to avoid infinite recursion
+                board[bestMove] = 'O';
+                document.querySelector(`[data-index="${bestMove}"]`).textContent = 'O';
+                document.querySelector(`[data-index="${bestMove}"]`).classList.add('o');
+
+                if (checkWin()) {
+                    const winner = 'AI';
+                    document.getElementById('status').textContent = `${winner} wins!`;
+                    scores['O']++;
+                    updateScore();
+                    highlightWinningCells();
+                    gameActive = false;
+                    showGameOverlay(winner + ' wins!', '🤖 Better luck next time!');
+                    return;
+                }
+
+                if (board.every(cell => cell !== '')) {
+                    document.getElementById('status').textContent = "It's a tie!";
+                    gameActive = false;
+                    showGameOverlay('It\'s a Tie!', '🤝 Great game! Try again?');
+                    return;
+                }
+
+                currentPlayer = 'X';
+                updateCurrentPlayer();
+            }
+        }
+
+        function getBestMove() {
+            // Try to win
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'O';
+                    if (checkWin()) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+
+            // Try to block player from winning
+            for (let i = 0; i < 9; i++) {
+                if (board[i] === '') {
+                    board[i] = 'X';
+                    if (checkWin()) {
+                        board[i] = '';
+                        return i;
+                    }
+                    board[i] = '';
+                }
+            }
+
+            // Take center if available
+            if (board[4] === '') return 4;
+
+            // Take corners
+            const corners = [0, 2, 6, 8];
+            const availableCorners = corners.filter(i => board[i] === '');
+            if (availableCorners.length > 0) {
+                return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+            }
+
+            // Take any available spot
+            const availableSpots = board.map((cell, index) => cell === '' ? index : null).filter(val => val !== null);
+            return availableSpots.length > 0 ? availableSpots[Math.floor(Math.random() * availableSpots.length)] : -1;
+        }
+
+        function updateScore() {
+            document.getElementById('x-score').textContent = scores.X;
+            document.getElementById('o-score').textContent = scores.O;
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            aiThinking = false;
+            document.getElementById('status').textContent = '';
+            
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o', 'winner');
+            });
+            
+            updateCurrentPlayer();
+        }
+
+        function goHome() {
+            window.location.href = '../index.html';
+        }
+
+        function showGameOverlay(title, message) {
+            document.getElementById('popupTitle').textContent = title;
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('gameOverlay').classList.add('show');
+        }
+
+        function hideGameOverlay() {
+            document.getElementById('gameOverlay').classList.remove('show');
+        }
+
+        // Add click event listeners to cells
+        document.querySelectorAll('.cell').forEach((cell, index) => {
+            cell.addEventListener('click', () => makeMove(index));
+        });
+
+        // Initialize display
+        updateCurrentPlayer();
+    </script>
+</body>
+</html>

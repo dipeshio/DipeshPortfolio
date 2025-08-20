@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw a Perfect Circle | Dipper's Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .game-container {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .instructions {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+
+        #drawingCanvas {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: crosshair;
+            background: #ffffff;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: #000;
+        }
+
+        .score-text {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .perfect-score {
+            color: #28a745;
+            animation: celebration 0.5s ease-in-out;
+        }
+
+        .good-score {
+            color: #fd7e14;
+        }
+
+        .poor-score {
+            color: #dc3545;
+        }
+
+        @keyframes celebration {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat {
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .feedback {
+            margin: 1rem 0;
+            font-size: 16px;
+            font-weight: 500;
+            min-height: 24px;
+        }
+
+        .best-score {
+            font-size: 14px;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            #drawingCanvas {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Draw a Perfect Circle</h1>
+        <p>Test your precision and steady hand</p>
+    </div>
+
+    <div class="game-container">
+        <div class="instructions">
+            Draw a circle as close to perfect as possible! Click and drag to draw. Your score is based on how circular your shape is.
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="drawingCanvas" width="400" height="400"></canvas>
+        </div>
+
+        <div class="score-display" id="scoreDisplay">0%</div>
+        <div class="score-text" id="scoreText">Draw a circle to get your score</div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="attempts">0</div>
+                <div>Attempts</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="bestScore">0%</div>
+                <div>Best Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="avgScore">0%</div>
+                <div>Average</div>
+            </div>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="controls">
+            <button class="btn" onclick="clearCanvas()">Clear & Try Again</button>
+            <button class="btn btn-secondary" onclick="goHome()">← Back to Portfolio</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let points = [];
+        let attempts = 0;
+        let scores = [];
+        let bestScore = 0;
+
+        // Load saved stats
+        loadStats();
+
+        function startDrawing(e) {
+            isDrawing = true;
+            points = [];
+            clearCanvas();
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            points.push({x, y});
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            points.push({x, y});
+            
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#000';
+            ctx.lineCap = 'round';
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            if (!isDrawing) return;
+            isDrawing = false;
+            
+            if (points.length > 10) {
+                calculateScore();
+            }
+        }
+
+        function calculateScore() {
+            if (points.length < 10) return; // Need more points for accurate calculation
+
+            // Find the best-fit circle using least squares
+            const { centerX, centerY, radius } = findBestFitCircle(points);
+            
+            if (radius < 20) return; // Too small to be a meaningful circle
+
+            // Calculate circularity score based on how close points are to the circle
+            let totalDeviation = 0;
+            let maxDeviation = 0;
+            
+            points.forEach(point => {
+                const distanceFromCenter = Math.sqrt(
+                    Math.pow(point.x - centerX, 2) + Math.pow(point.y - centerY, 2)
+                );
+                const deviation = Math.abs(distanceFromCenter - radius);
+                totalDeviation += deviation;
+                maxDeviation = Math.max(maxDeviation, deviation);
+            });
+
+            const avgDeviation = totalDeviation / points.length;
+            
+            // Calculate circularity score (0-100)
+            const maxAcceptableDeviation = radius * 0.15; // 15% tolerance
+            const circularityScore = Math.max(0, 100 - (avgDeviation / maxAcceptableDeviation) * 100);
+
+            // Check closure (start and end points should be close)
+            const firstPoint = points[0];
+            const lastPoint = points[points.length - 1];
+            const closureDistance = Math.sqrt(
+                Math.pow(lastPoint.x - firstPoint.x, 2) + Math.pow(lastPoint.y - firstPoint.y, 2)
+            );
+            
+            const closureScore = Math.max(0, 100 - (closureDistance / radius) * 200);
+
+            // Check smoothness (consistent spacing between points)
+            let smoothnessScore = calculateSmoothnessScore();
+
+            // Calculate completeness (how much of a full circle is drawn)
+            const completenessScore = calculateCompletenessScore(centerX, centerY, radius);
+
+            // Weighted final score
+            const finalScore = Math.round(
+                circularityScore * 0.4 +     // 40% circularity
+                closureScore * 0.25 +        // 25% closure
+                smoothnessScore * 0.15 +     // 15% smoothness
+                completenessScore * 0.20     // 20% completeness
+            );
+
+            updateScore(Math.max(0, Math.min(100, finalScore)));
+        }
+
+        function findBestFitCircle(points) {
+            // Use least squares to find best-fit circle
+            let sumX = 0, sumY = 0, sumX2 = 0, sumY2 = 0, sumXY = 0;
+            let sumX3 = 0, sumY3 = 0, sumX2Y = 0, sumXY2 = 0;
+
+            points.forEach(p => {
+                const x = p.x, y = p.y;
+                sumX += x; sumY += y;
+                sumX2 += x * x; sumY2 += y * y; sumXY += x * y;
+                sumX3 += x * x * x; sumY3 += y * y * y;
+                sumX2Y += x * x * y; sumXY2 += x * y * y;
+            });
+
+            const n = points.length;
+            const A = n * sumX2 - sumX * sumX;
+            const B = n * sumXY - sumX * sumY;
+            const C = n * sumY2 - sumY * sumY;
+            const D = 0.5 * (n * sumXY2 - sumX * sumY2 + n * sumX3 - sumX * sumX2);
+            const E = 0.5 * (n * sumX2Y - sumY * sumX2 + n * sumY3 - sumY * sumY2);
+
+            const det = A * C - B * B;
+            if (Math.abs(det) < 1e-10) {
+                // Fallback to centroid method
+                const centerX = sumX / n;
+                const centerY = sumY / n;
+                const radius = Math.sqrt(sumX2 / n + sumY2 / n - centerX * centerX - centerY * centerY);
+                return { centerX, centerY, radius };
+            }
+
+            const centerX = (D * C - B * E) / det;
+            const centerY = (A * E - B * D) / det;
+            
+            // Calculate radius as average distance from center
+            let sumRadii = 0;
+            points.forEach(p => {
+                sumRadii += Math.sqrt(Math.pow(p.x - centerX, 2) + Math.pow(p.y - centerY, 2));
+            });
+            const radius = sumRadii / points.length;
+
+            return { centerX, centerY, radius };
+        }
+
+        function calculateSmoothnessScore() {
+            if (points.length < 10) return 0;
+
+            let totalSpacing = 0;
+            let spacings = [];
+
+            for (let i = 1; i < points.length; i++) {
+                const spacing = Math.sqrt(
+                    Math.pow(points[i].x - points[i-1].x, 2) + 
+                    Math.pow(points[i].y - points[i-1].y, 2)
+                );
+                spacings.push(spacing);
+                totalSpacing += spacing;
+            }
+
+            const avgSpacing = totalSpacing / spacings.length;
+            
+            // Calculate variance in spacing
+            let variance = 0;
+            spacings.forEach(spacing => {
+                variance += Math.pow(spacing - avgSpacing, 2);
+            });
+            variance /= spacings.length;
+            
+            const stdDev = Math.sqrt(variance);
+            
+            // Score based on consistency (lower variance = higher score)
+            return Math.max(0, 100 - (stdDev / avgSpacing) * 100);
+        }
+
+        function calculateCompletenessScore(centerX, centerY, radius) {
+            if (points.length < 10) return 0;
+
+            // Calculate angles of all points relative to center
+            const angles = points.map(p => {
+                return Math.atan2(p.y - centerY, p.x - centerX);
+            });
+
+            // Normalize angles to 0-2π
+            const normalizedAngles = angles.map(angle => {
+                return angle < 0 ? angle + 2 * Math.PI : angle;
+            });
+
+            // Sort angles
+            normalizedAngles.sort((a, b) => a - b);
+
+            // Find the largest gap
+            let maxGap = 0;
+            for (let i = 1; i < normalizedAngles.length; i++) {
+                const gap = normalizedAngles[i] - normalizedAngles[i-1];
+                maxGap = Math.max(maxGap, gap);
+            }
+
+            // Check gap from last to first angle (wrapping around)
+            const wrapGap = 2 * Math.PI - normalizedAngles[normalizedAngles.length - 1] + normalizedAngles[0];
+            maxGap = Math.max(maxGap, wrapGap);
+
+            // Score based on completeness (smaller max gap = higher score)
+            const completeness = Math.max(0, 100 - (maxGap / (Math.PI)) * 100);
+            return completeness;
+        }
+
+        function updateScore(score) {
+            attempts++;
+            scores.push(score);
+            
+            if (score > bestScore) {
+                bestScore = score;
+            }
+
+            const avgScore = Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length);
+
+            // Update display
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const scoreText = document.getElementById('scoreText');
+            
+            scoreDisplay.textContent = score + '%';
+            
+            // Add score-based styling
+            scoreDisplay.className = 'score-display';
+            if (score >= 95) {
+                scoreDisplay.classList.add('perfect-score');
+                scoreText.textContent = '🎯 Perfect! You\'re a circle master!';
+            } else if (score >= 80) {
+                scoreDisplay.classList.add('good-score');
+                scoreText.textContent = '👌 Great job! Very close to perfect!';
+            } else if (score >= 60) {
+                scoreDisplay.classList.add('good-score');
+                scoreText.textContent = '👍 Good circle! Keep practicing!';
+            } else {
+                scoreDisplay.classList.add('poor-score');
+                scoreText.textContent = '🎨 Keep trying! Practice makes perfect!';
+            }
+
+            // Update stats
+            document.getElementById('attempts').textContent = attempts;
+            document.getElementById('bestScore').textContent = bestScore + '%';
+            document.getElementById('avgScore').textContent = avgScore + '%';
+
+            saveStats();
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            points = [];
+            
+            // Reset score display if no attempts yet
+            if (attempts === 0) {
+                document.getElementById('scoreDisplay').textContent = '0%';
+                document.getElementById('scoreText').textContent = 'Draw a circle to get your score';
+            }
+        }
+
+        function saveStats() {
+            localStorage.setItem('circleGame', JSON.stringify({
+                attempts,
+                bestScore,
+                scores: scores.slice(-10) // Keep only last 10 scores
+            }));
+        }
+
+        function loadStats() {
+            const saved = localStorage.getItem('circleGame');
+            if (saved) {
+                const data = JSON.parse(saved);
+                attempts = data.attempts || 0;
+                bestScore = data.bestScore || 0;
+                scores = data.scores || [];
+                
+                // Update display
+                document.getElementById('attempts').textContent = attempts;
+                document.getElementById('bestScore').textContent = bestScore + '%';
+                
+                if (scores.length > 0) {
+                    const avgScore = Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length);
+                    document.getElementById('avgScore').textContent = avgScore + '%';
+                }
+            }
+        }
+
+        function goHome() {
+            window.location.href = '../index.html';
+        }
+
+        // Mouse events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            canvas.dispatchEvent(mouseEvent);
+        });
+    </script>
+</body>
+</html>

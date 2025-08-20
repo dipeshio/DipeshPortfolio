@@ -11,7 +11,6 @@
 
 <body>
     <a href="#main-content" class="skip-to-main">Skip to main content</a>
-    <div class="pixel-scanlines" aria-hidden="true"></div>
     <header class="pixel-header" role="banner">
         <nav class="pixel-nav" role="navigation" aria-label="Main navigation">
             <div class="logo" data-text="DIPPER" role="heading" aria-level="1">DIPPER</div>
@@ -19,7 +18,7 @@
                 <li role="none"><a href="#about" class="pixel-link" role="menuitem">About</a></li>
                 <li role="none"><a href="#projects" class="pixel-link" role="menuitem">Projects</a></li>
                 <li role="none"><a href="documents.html" class="pixel-link" role="menuitem">Documents</a></li>
-                <li role="none"><a href="#contact" class="pixel-link" role="menuitem">Contact</a></li>
+
 
 
             </ul>
@@ -31,14 +30,7 @@
             <div class="hero-content">
                 <h1 id="hero-title" class="glitch-text" data-text="Dipesh Bhattarai">Dipesh Bhattarai</h1>
                 <p class="subtitle" >Mathematics, Economics, and Data Science Student</p>
-                <div class="pixel-avatar" aria-hidden="true">
-                    <div class="pixel-avatar-inner"></div>
-                </div>
-                <div class="pixel-decorations" aria-hidden="true">
-                    <div class="pixel-star"></div>
-                    <div class="pixel-star"></div>
-                    <div class="pixel-star"></div>
-                </div>
+
             </div>
         </section>
 
@@ -94,201 +86,194 @@
             <h2 class="section-title">Projects</h2>
             <div class="projects-container">
                 <div class="project-grid">
-                    <article class="project-card">
+                    <article class="project-card" onclick="window.open('projects/tic-tac-toe.html', '_blank')">
                         <div class="project-image">
                             <svg width="100%" height="100%" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="100%" height="100%" fill="#1E293B" />
-                                <circle cx="200" cy="150" r="50" fill="#6366F1" opacity="0.5" />
-                                <rect x="150" y="120" width="100" height="60" fill="#F472B6" opacity="0.3" />
-                                <path d="M150,100 L250,100 L200,50 Z" fill="#6366F1" opacity="0.4" />
+                                <rect width="100%" height="100%" fill="#4CAF50" />
+                                <!-- Tic-tac-toe grid -->
+                                <g stroke="#ffffff" stroke-width="4" fill="none">
+                                    <!-- Grid lines -->
+                                    <line x1="170" y1="90" x2="170" y2="210" />
+                                    <line x1="230" y1="90" x2="230" y2="210" />
+                                    <line x1="130" y1="130" x2="270" y2="130" />
+                                    <line x1="130" y1="170" x2="270" y2="170" />
+                                </g>
+                                <!-- X and O symbols -->
+                                <g stroke="#ffffff" stroke-width="3" fill="none">
+                                    <!-- X in top-left -->
+                                    <line x1="140" y1="100" x2="160" y2="120" />
+                                    <line x1="160" y1="100" x2="140" y2="120" />
+                                    <!-- O in center -->
+                                    <circle cx="200" cy="150" r="15" />
+                                    <!-- X in bottom-right -->
+                                    <line x1="240" y1="180" x2="260" y2="200" />
+                                    <line x1="260" y1="180" x2="240" y2="200" />
+                                </g>
                             </svg>
                         </div>
                         <div class="project-content">
                             <div class="project-header">
-                                <h3 class="project-title">Temp 1</h3>
-                                <span class="project-year">20XX</span>
+                                <h3 class="project-title">Tic-Tac-Toe Game</h3>
+                                <span class="project-year">2024</span>
                             </div>
-                            <p class="project-description">Generic Description.</p>
+                            <p class="project-description">Classic strategy game for two players with score tracking and smooth gameplay.</p>
                             <div class="project-tech">
-                                <span class="tech-tag">Skill1</span>
-                                <span class="tech-tag">Skill2</span>
-                                <span class="tech-tag">Skill3</span>
+                                <span class="tech-tag">HTML</span>
+                                <span class="tech-tag">CSS</span>
+                                <span class="tech-tag">JavaScript</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://github.com/only-mar/" class="project-link">Demo</a>
-                                <a href="https://github.com/only-mar/" class="project-link">GitHub</a>
+                                <a href="projects/tic-tac-toe.html" class="project-link" onclick="event.stopPropagation()">Play Game</a>
+                                <a href="https://github.com/dipeshio" class="project-link" onclick="event.stopPropagation()">GitHub</a>
                             </div>
                         </div>
                     </article>
 
-                    <article class="project-card">
+                    <article class="project-card" onclick="window.open('projects/perfect-circle.html', '_blank')">
                         <div class="project-image">
                             <svg width="100%" height="100%" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="100%" height="100%" fill="#1E293B" />
-                                <rect x="100" y="100" width="200" height="100" fill="#6366F1" opacity="0.3" />
-                                <circle cx="150" cy="150" r="30" fill="#F472B6" opacity="0.4" />
-                                <circle cx="250" cy="150" r="30" fill="#F472B6" opacity="0.4" />
-                                <rect x="140" y="140" width="120" height="20" fill="#6366F1" opacity="0.5" />
+                                <rect width="100%" height="100%" fill="#2196F3" />
+                                <!-- Drawing canvas representation -->
+                                <rect x="80" y="60" width="240" height="180" fill="#ffffff" opacity="0.9" stroke="#ffffff" stroke-width="2" />
+                                <!-- Perfect circle (target) -->
+                                <circle cx="200" cy="150" r="40" fill="none" stroke="#4CAF50" stroke-width="2" stroke-dasharray="4,4" opacity="0.6" />
+                                <!-- Hand-drawn circle (imperfect) -->
+                                <path d="M 160,150 Q 180,110 220,130 Q 240,150 220,170 Q 180,190 160,170 Q 140,150 160,150 Z" 
+                                      fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+                                <!-- Pencil icon -->
+                                <g transform="translate(320, 80)">
+                                    <rect x="0" y="15" width="8" height="25" fill="#FFD700" />
+                                    <polygon points="0,15 8,15 4,5" fill="#FF6B6B" />
+                                    <circle cx="4" cy="42" r="2" fill="#333" />
+                                </g>
+                                <!-- Score display -->
+                                <text x="120" y="90" fill="#ffffff" font-size="14" font-weight="bold">87%</text>
                             </svg>
                         </div>
                         <div class="project-content">
                             <div class="project-header">
-                                <h3 class="project-title">Temp 2</h3>
-                                <span class="project-year">20XX</span>
+                                <h3 class="project-title">Draw a Perfect Circle</h3>
+                                <span class="project-year">2024</span>
                             </div>
-                            <p class="project-description">Generic Description.</p>
+                            <p class="project-description">Test your precision with this challenging drawing game that scores how close your circle is to perfect.</p>
                             <div class="project-tech">
-                                <span class="tech-tag">Skill1</span>
-                                <span class="tech-tag">Skill2</span>
-                                <span class="tech-tag">Skill3</span>
+                                <span class="tech-tag">Canvas API</span>
+                                <span class="tech-tag">Mathematics</span>
+                                <span class="tech-tag">JavaScript</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://github.com/only-mar/" class="project-link">Live Site</a>
-                                <a href="https://github.com/only-mar/" class="project-link">GitHub</a>
+                                <a href="projects/perfect-circle.html" class="project-link" onclick="event.stopPropagation()">Play Game</a>
+                                <a href="https://github.com/dipeshio" class="project-link" onclick="event.stopPropagation()">GitHub</a>
                             </div>
                         </div>
                     </article>
-                    <article class="project-card">
+
+                    <article class="project-card" onclick="window.open('projects/stock-simulator.html', '_blank')">
                         <div class="project-image">
                             <svg width="100%" height="100%" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="100%" height="100%" fill="#1E293B" />
-                                <circle cx="200" cy="150" r="50" fill="#6366F1" opacity="0.5" />
-                                <rect x="150" y="120" width="100" height="60" fill="#F472B6" opacity="0.3" />
-                                <path d="M150,100 L250,100 L200,50 Z" fill="#6366F1" opacity="0.4" />
+                                <rect width="100%" height="100%" fill="#FF9800" />
+                                <!-- Stock chart background -->
+                                <rect x="60" y="60" width="280" height="180" fill="#ffffff" opacity="0.9" stroke="#ffffff" stroke-width="2" />
+                                <!-- Chart grid -->
+                                <g stroke="#e0e0e0" stroke-width="1">
+                                    <line x1="60" y1="100" x2="340" y2="100" />
+                                    <line x1="60" y1="140" x2="340" y2="140" />
+                                    <line x1="60" y1="180" x2="340" y2="180" />
+                                    <line x1="60" y1="220" x2="340" y2="220" />
+                                    <line x1="100" y1="60" x2="100" y2="240" />
+                                    <line x1="160" y1="60" x2="160" y2="240" />
+                                    <line x1="220" y1="60" x2="220" y2="240" />
+                                    <line x1="280" y1="60" x2="280" y2="240" />
+                                </g>
+                                <!-- Chart axes -->
+                                <g stroke="#333" stroke-width="2">
+                                    <line x1="60" y1="60" x2="60" y2="240" />
+                                    <line x1="60" y1="240" x2="340" y2="240" />
+                                </g>
+                                <!-- Stock price line (upward trend) -->
+                                <polyline points="60,220 100,200 160,180 220,140 280,100 340,80" 
+                                         fill="none" stroke="#4CAF50" stroke-width="3" />
+                                <!-- Another stock line (mixed) -->
+                                <polyline points="60,200 100,190 160,210 220,160 280,120 340,110" 
+                                         fill="none" stroke="#2196F3" stroke-width="2" />
+                                <!-- Dollar sign -->
+                                <text x="320" y="100" fill="#4CAF50" font-size="20" font-weight="bold">$</text>
+                                <!-- Portfolio value -->
+                                <text x="80" y="85" fill="#333" font-size="12" font-weight="bold">+12.5%</text>
                             </svg>
                         </div>
                         <div class="project-content">
                             <div class="project-header">
-                                <h3 class="project-title">Temp 1</h3>
-                                <span class="project-year">20XX</span>
+                                <h3 class="project-title">Stock Market Simulator</h3>
+                                <span class="project-year">2024</span>
                             </div>
-                            <p class="project-description">Generic Description.</p>
+                            <p class="project-description">Interactive stock trading game with real market events and portfolio tracking.</p>
                             <div class="project-tech">
-                                <span class="tech-tag">Skill1</span>
-                                <span class="tech-tag">Skill2</span>
-                                <span class="tech-tag">Skill3</span>
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">Economics</span>
+                                <span class="tech-tag">Finance</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://github.com/only-mar/" class="project-link">Demo</a>
-                                <a href="https://github.com/only-mar/" class="project-link">GitHub</a>
+                                <a href="projects/stock-simulator.html" class="project-link" onclick="event.stopPropagation()">Try It</a>
+                                <a href="https://github.com/dipeshio" class="project-link" onclick="event.stopPropagation()">GitHub</a>
                             </div>
                         </div>
                     </article>
-                    <article class="project-card">
+
+                    <article class="project-card" onclick="window.open('projects/housing-estimator.html', '_blank')">
                         <div class="project-image">
                             <svg width="100%" height="100%" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="100%" height="100%" fill="#1E293B" />
-                                <circle cx="200" cy="150" r="50" fill="#6366F1" opacity="0.5" />
-                                <rect x="150" y="120" width="100" height="60" fill="#F472B6" opacity="0.3" />
-                                <path d="M150,100 L250,100 L200,50 Z" fill="#6366F1" opacity="0.4" />
+                                <rect width="100%" height="100%" fill="#9C27B0" />
+                                <!-- House outline -->
+                                <g stroke="#ffffff" stroke-width="3" fill="none">
+                                    <!-- House base -->
+                                    <rect x="120" y="140" width="160" height="120" />
+                                    <!-- Roof -->
+                                    <polygon points="110,140 200,80 290,140" />
+                                    <!-- Door -->
+                                    <rect x="180" y="200" width="40" height="60" fill="#ffffff" />
+                                    <!-- Windows -->
+                                    <rect x="140" y="160" width="30" height="30" fill="#ffffff" />
+                                    <rect x="230" y="160" width="30" height="30" fill="#ffffff" />
+                                </g>
+                                <!-- Calculator/Chart elements -->
+                                <g fill="#ffffff">
+                                    <!-- Price tag -->
+                                    <rect x="320" y="100" width="60" height="30" rx="5" />
+                                    <text x="350" y="118" text-anchor="middle" fill="#9C27B0" font-size="10" font-weight="bold">$425K</text>
+                                    <!-- Graph bars -->
+                                    <rect x="60" y="220" width="8" height="20" />
+                                    <rect x="70" y="210" width="8" height="30" />
+                                    <rect x="80" y="200" width="8" height="40" />
+                                    <rect x="90" y="190" width="8" height="50" />
+                                </g>
+                                <!-- Confidence interval -->
+                                <text x="70" y="185" fill="#ffffff" font-size="8">95% CI</text>
                             </svg>
                         </div>
                         <div class="project-content">
                             <div class="project-header">
-                                <h3 class="project-title">Temp 1</h3>
-                                <span class="project-year">20XX</span>
+                                <h3 class="project-title">Housing Price Estimator</h3>
+                                <span class="project-year">2024</span>
                             </div>
-                            <p class="project-description">Generic Description.</p>
+                            <p class="project-description">Statistical model for estimating home values with linear regression and 95% confidence intervals.</p>
                             <div class="project-tech">
-                                <span class="tech-tag">Skill1</span>
-                                <span class="tech-tag">Skill2</span>
-                                <span class="tech-tag">Skill3</span>
+                                <span class="tech-tag">Linear Regression</span>
+                                <span class="tech-tag">Statistics</span>
+                                <span class="tech-tag">Real Estate</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://github.com/only-mar/" class="project-link">Demo</a>
-                                <a href="https://github.com/only-mar/" class="project-link">GitHub</a>
+                                <a href="projects/housing-estimator.html" class="project-link" onclick="event.stopPropagation()">Try Tool</a>
+                                <a href="https://github.com/dipeshio" class="project-link" onclick="event.stopPropagation()">GitHub</a>
                             </div>
                         </div>
                     </article>
-                    <article class="project-card">
-                        <div class="project-image">
-                            <svg width="100%" height="100%" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="100%" height="100%" fill="#1E293B" />
-                                <circle cx="200" cy="150" r="50" fill="#6366F1" opacity="0.5" />
-                                <rect x="150" y="120" width="100" height="60" fill="#F472B6" opacity="0.3" />
-                                <path d="M150,100 L250,100 L200,50 Z" fill="#6366F1" opacity="0.4" />
-                            </svg>
-                        </div>
-                        <div class="project-content">
-                            <div class="project-header">
-                                <h3 class="project-title">Temp 1</h3>
-                                <span class="project-year">20XX</span>
-                            </div>
-                            <p class="project-description">Generic Description.</p>
-                            <div class="project-tech">
-                                <span class="tech-tag">Skill1</span>
-                                <span class="tech-tag">Skill2</span>
-                                <span class="tech-tag">Skill3</span>
-                            </div>
-                            <div class="project-links">
-                                <a href="https://github.com/only-mar/" class="project-link">Demo</a>
-                                <a href="https://github.com/only-mar/" class="project-link">GitHub</a>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="project-card">
-                        <div class="project-image">
-                            <svg width="100%" height="100%" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="100%" height="100%" fill="#1E293B" />
-                                <circle cx="200" cy="150" r="50" fill="#6366F1" opacity="0.5" />
-                                <rect x="150" y="120" width="100" height="60" fill="#F472B6" opacity="0.3" />
-                                <path d="M150,100 L250,100 L200,50 Z" fill="#6366F1" opacity="0.4" />
-                            </svg>
-                        </div>
-                        <div class="project-content">
-                            <div class="project-header">
-                                <h3 class="project-title">Temp 1</h3>
-                                <span class="project-year">20XX</span>
-                            </div>
-                            <p class="project-description">Generic Description.</p>
-                            <div class="project-tech">
-                                <span class="tech-tag">Skill1</span>
-                                <span class="tech-tag">Skill2</span>
-                                <span class="tech-tag">Skill3</span>
-                            </div>
-                            <div class="project-links">
-                                <a href="https://github.com/only-mar/" class="project-link">Demo</a>
-                                <a href="https://github.com/only-mar/" class="project-link">GitHub</a>
-                            </div>
-                        </div>
-                    </article>
+
                 </div>
             </div>
         </section>
 
-        <section id="contact" class="pixel-section">
-            <div class="contact-container">
-                <div class="contact-header">
-                    <h2 class="section-title">Get in Touch</h2>
-                    <p class="contact-description">Have a project in mind or want to collaborate? I'd love to hear from
-                        you.</p>
-                </div>
-                <form class="contact-form">
-                    <div class="form-group">
-                        <label class="form-label" for="name">Name</label>
-                        <input type="text" id="name" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
-                        <input type="email" id="email" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="message">Message</label>
-                        <textarea id="message" class="form-input" required></textarea>
-                    </div>
-                    <button type="submit" class="contact-submit">Send Message</button>
-                </form>
-                <div class="contact-alternatives">
-                    <h3>Or reach out via</h3>
-                    <div class="social-links-alt">
-                        <a href="https://github.com/dipeshio" target="_blank" class="social-link">GitHub</a>
-                        <a href="https://www.linkedin.com/in/dipeshb/" target="_blank" class="social-link">LinkedIn</a>
-                        <!-- TODO: Impleement email button -->
-                        <a href="#" class="social-link">Email</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+
     </main>
 
 <!--    <footer class="pixel-footer" role="contentinfo">-->

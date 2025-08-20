@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market Simulator | Dipper's Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1.5rem;
+        }
+
+        .main-panel {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .portfolio-value {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .portfolio-value h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .value-amount {
+            font-size: 36px;
+            font-weight: 700;
+            color: #28a745;
+        }
+
+        .value-change {
+            font-size: 16px;
+            margin-top: 0.5rem;
+        }
+
+        .positive { color: #28a745; }
+        .negative { color: #dc3545; }
+
+        .stocks-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .stock-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .stock-card:hover {
+            border-color: #000;
+            transform: translateY(-2px);
+        }
+
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stock-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .stock-symbol {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stock-price {
+            text-align: right;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .change {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stock-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .positive-btn { background: #28a745; }
+        .negative-btn { background: #dc3545; }
+        .neutral-btn { background: #17a2b8; }
+
+        .events-panel h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .event-log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .event {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .event:last-child {
+            border-bottom: none;
+        }
+
+        .event-time {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .controls {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .holdings {
+            margin-top: 1.5rem;
+        }
+
+        .holdings h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .holding {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .time-controls {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .time-display {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #000;
+        }
+
+        .speed-controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .speed-btn {
+            background: #f0f0f0;
+            border: 1px solid #e0e0e0;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .speed-btn.active {
+            background: #000;
+            color: #fff;
+        }
+
+        .chart-container {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            height: 400px;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .dividend-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .market-action-global {
+            background: #17a2b8;
+            margin-bottom: 1rem;
+        }
+
+        .auto-invest {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 12px;
+            margin-top: 0.5rem;
+        }
+
+        .auto-invest input[type="checkbox"] {
+            transform: scale(0.8);
+        }
+
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: 1fr;
+            }
+            
+            .stock-actions {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .speed-controls {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Stock Market Simulator</h1>
+            <p>Make investment decisions and watch the market react to events</p>
+        </div>
+
+        <div class="game-board">
+            <div class="main-panel">
+                <div class="time-controls">
+                    <div class="time-display" id="timeDisplay">Day 1</div>
+                    <div class="speed-controls">
+                        <button class="speed-btn" onclick="setSpeed(0)">Pause</button>
+                        <button class="speed-btn active" onclick="setSpeed(1)">1x</button>
+                        <button class="speed-btn" onclick="setSpeed(2)">2x</button>
+                        <button class="speed-btn" onclick="setSpeed(5)">5x</button>
+                    </div>
+                    <button class="btn market-action-global" onclick="triggerGlobalMarketEvent()">Global Market Event</button>
+                    <button class="btn market-action-global" onclick="triggerIndustryEvents()">Industry Events</button>
+                </div>
+
+                <div class="portfolio-value">
+                    <h2>Portfolio Value</h2>
+                    <div class="value-amount" id="portfolioValue">$10,000</div>
+                    <div class="value-change" id="portfolioChange">+$0 (0.00%)</div>
+                </div>
+
+                <div class="stocks-grid" id="stocksGrid">
+                    <!-- Stocks will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="events-panel">
+                    <h3>Market Events</h3>
+                    <div class="event-log" id="eventLog">
+                        <div class="event">
+                            <div>Welcome to the Stock Market Simulator!</div>
+                            <div class="event-time">Game started</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="chartCanvas" class="chart-canvas"></canvas>
+                </div>
+
+                <div class="holdings">
+                    <h4>Your Holdings</h4>
+                    <div id="holdingsDisplay">
+                        <div class="holding">
+                            <span>Cash</span>
+                            <span id="cashAmount">$10,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="resetGame()">Reset Portfolio</button>
+            <button class="btn btn-secondary" onclick="goHome()">← Back to Portfolio</button>
+        </div>
+    </div>
+
+    <script>
+        let portfolio = {
+            cash: 10000,
+            stocks: {},
+            initialValue: 10000,
+            history: [10000]
+        };
+
+        let gameTime = {
+            day: 1,
+            speed: 1, // 0 = paused, 1 = normal, 2 = 2x, 5 = 5x
+            lastUpdate: Date.now()
+        };
+
+        let chartData = {
+            portfolio: [10000],
+            stocks: {}
+        };
+
+        const stocks = {
+            AAPL: { 
+                name: 'Apple Inc.', 
+                price: 150, 
+                shares: 0, 
+                dividend: 0.24, 
+                autoReinvest: false,
+                history: [150],
+                lastDividend: 0
+            },
+            GOOGL: { 
+                name: 'Alphabet Inc.', 
+                price: 120, 
+                shares: 0, 
+                dividend: 0, 
+                autoReinvest: false,
+                history: [120],
+                lastDividend: 0
+            },
+            TSLA: { 
+                name: 'Tesla Inc.', 
+                price: 200, 
+                shares: 0, 
+                dividend: 0, 
+                autoReinvest: false,
+                history: [200],
+                lastDividend: 0
+            },
+            MSFT: { 
+                name: 'Microsoft Corp.', 
+                price: 300, 
+                shares: 0, 
+                dividend: 0.62, 
+                autoReinvest: false,
+                history: [300],
+                lastDividend: 0
+            },
+            AMZN: { 
+                name: 'Amazon.com Inc.', 
+                price: 180, 
+                shares: 0, 
+                dividend: 0, 
+                autoReinvest: false,
+                history: [180],
+                lastDividend: 0
+            }
+        };
+
+        const events = {
+            AAPL: [
+                { text: '📱 Revolutionary iPhone creates market frenzy', impact: 0.22, type: 'positive' },
+                { text: '⚠️ Massive supply chain crisis unfolds', impact: -0.18, type: 'negative' },
+                { text: '📊 Q1 earnings shatter all records', impact: 0.26, type: 'positive' },
+                { text: '🔧 Critical production failures halt manufacturing', impact: -0.16, type: 'negative' },
+                { text: '🎯 Unprecedented stock buyback announced', impact: 0.14, type: 'positive' },
+                { text: '💥 CEO departure shocks investors', impact: -0.20, type: 'negative' },
+                { text: '🚀 Next-gen technology unveiling amazes market', impact: 0.19, type: 'positive' }
+            ],
+            GOOGL: [
+                { text: '🤖 AI breakthrough revolutionizes entire industry', impact: 0.28, type: 'positive' },
+                { text: '⚖️ Government antitrust breakup imminent', impact: -0.22, type: 'negative' },
+                { text: '📈 Ad revenue explosion defies expectations', impact: 0.17, type: 'positive' },
+                { text: '🛡️ Massive data breach scandal erupts', impact: -0.15, type: 'negative' },
+                { text: '☁️ Cloud dominance reaches new heights', impact: 0.21, type: 'positive' },
+                { text: '💥 Search monopoly faces regulatory assault', impact: -0.19, type: 'negative' },
+                { text: '🎯 Quantum computing milestone achieved', impact: 0.24, type: 'positive' }
+            ],
+            TSLA: [
+                { text: '🚗 Vehicle deliveries smash all projections', impact: 0.32, type: 'positive' },
+                { text: '⚡ Catastrophic battery failures trigger recalls', impact: -0.25, type: 'negative' },
+                { text: '🏭 Gigafactory network expansion accelerates', impact: 0.20, type: 'positive' },
+                { text: '💸 CEO stock sales panic market', impact: -0.18, type: 'negative' },
+                { text: '🛰️ SpaceX synergy creates new revenue streams', impact: 0.16, type: 'positive' },
+                { text: '💥 Autopilot safety crisis deepens', impact: -0.23, type: 'negative' },
+                { text: '🚀 Full self-driving approval granted', impact: 0.35, type: 'positive' }
+            ],
+            MSFT: [
+                { text: '☁️ Azure becomes undisputed cloud leader', impact: 0.23, type: 'positive' },
+                { text: '🔒 Massive cyberattack breaches security', impact: -0.20, type: 'negative' },
+                { text: '💼 Enterprise software dominance expands', impact: 0.18, type: 'positive' },
+                { text: '🎮 Gaming division faces major losses', impact: -0.14, type: 'negative' },
+                { text: '🤝 Blockbuster acquisition transforms company', impact: 0.16, type: 'positive' },
+                { text: '💥 AI integration fails catastrophically', impact: -0.17, type: 'negative' },
+                { text: '🎯 Office suite revolutionizes productivity', impact: 0.21, type: 'positive' }
+            ],
+            AMZN: [
+                { text: '📦 Prime membership reaches historic milestones', impact: 0.19, type: 'positive' },
+                { text: '👥 Massive labor uprising cripples operations', impact: -0.17, type: 'negative' },
+                { text: '🏪 Retail dominance crushes all competition', impact: 0.24, type: 'positive' },
+                { text: '📉 AWS faces unprecedented competition threat', impact: -0.19, type: 'negative' },
+                { text: '🚀 Drone delivery revolution begins', impact: 0.15, type: 'positive' },
+                { text: '💥 Antitrust action threatens breakup', impact: -0.22, type: 'negative' },
+                { text: '🎯 International expansion exceeds projections', impact: 0.18, type: 'positive' }
+            ]
+        };
+
+        function updateDisplay() {
+            // Update portfolio value
+            const totalValue = calculatePortfolioValue();
+            const change = totalValue - portfolio.initialValue;
+            const changePercent = (change / portfolio.initialValue) * 100;
+
+            document.getElementById('portfolioValue').textContent = `$${totalValue.toLocaleString()}`;
+            
+            const changeElement = document.getElementById('portfolioChange');
+            const changeText = `${change >= 0 ? '+' : ''}$${Math.abs(change).toLocaleString()} (${changePercent.toFixed(2)}%)`;
+            changeElement.textContent = changeText;
+            changeElement.className = `value-change ${change >= 0 ? 'positive' : 'negative'}`;
+
+            // Update stocks grid
+            updateStocksGrid();
+
+            // Update holdings
+            updateHoldings();
+        }
+
+        function calculatePortfolioValue() {
+            let total = portfolio.cash;
+            for (const symbol in stocks) {
+                total += stocks[symbol].price * stocks[symbol].shares;
+            }
+            return Math.round(total);
+        }
+
+        function updateStocksGrid() {
+            const grid = document.getElementById('stocksGrid');
+            grid.innerHTML = '';
+
+            for (const [symbol, stock] of Object.entries(stocks)) {
+                const card = document.createElement('div');
+                card.className = 'stock-card';
+                
+                const dailyChange = stock.history.length > 1 ? 
+                    ((stock.price - stock.history[stock.history.length - 2]) / stock.history[stock.history.length - 2] * 100) : 0;
+                
+                card.innerHTML = `
+                    <div class="stock-header">
+                        <div class="stock-info">
+                            <h3>${stock.name}</h3>
+                            <div class="stock-symbol">${symbol}</div>
+                            ${stock.dividend > 0 ? `<div class="dividend-info">Dividend: $${stock.dividend.toFixed(2)}/share</div>` : ''}
+                        </div>
+                        <div class="stock-price">
+                            <div class="price">$${stock.price.toFixed(2)}</div>
+                            <div class="change ${dailyChange >= 0 ? 'positive' : 'negative'}">
+                                ${dailyChange >= 0 ? '+' : ''}${dailyChange.toFixed(2)}%
+                            </div>
+                            ${stock.shares > 0 ? `<div class="change">Owned: ${stock.shares.toFixed(3)}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="stock-actions">
+                        <button class="action-btn positive-btn" onclick="buyStock('${symbol}')">Buy ($${stock.price.toFixed(0)})</button>
+                        ${stock.shares > 0 ? `<button class="action-btn negative-btn" onclick="sellStock('${symbol}')">Sell</button>` : ''}
+                        <button class="action-btn neutral-btn" onclick="triggerEvent('${symbol}')">Market Event</button>
+                    </div>
+                    ${stock.dividend > 0 ? `
+                        <div class="auto-invest">
+                            <input type="checkbox" id="auto-${symbol}" ${stock.autoReinvest ? 'checked' : ''} onchange="toggleAutoReinvest('${symbol}')">
+                            <label for="auto-${symbol}">Auto-reinvest dividends</label>
+                        </div>
+                    ` : ''}
+                `;
+                grid.appendChild(card);
+            }
+        }
+        
+        function toggleAutoReinvest(symbol) {
+            stocks[symbol].autoReinvest = !stocks[symbol].autoReinvest;
+            logEvent(`${stocks[symbol].autoReinvest ? '✅' : '❌'} ${symbol} auto-reinvest ${stocks[symbol].autoReinvest ? 'enabled' : 'disabled'}`);
+        }
+
+        function updateHoldings() {
+            const holdings = document.getElementById('holdingsDisplay');
+            holdings.innerHTML = `
+                <div class="holding">
+                    <span>Cash</span>
+                    <span>$${portfolio.cash.toLocaleString()}</span>
+                </div>
+            `;
+
+            for (const [symbol, stock] of Object.entries(stocks)) {
+                if (stock.shares > 0) {
+                    const currentValue = stock.shares * stock.price;
+                    const costBasis = stock.shares * stock.history[0]; // Initial price
+                    const pl = currentValue - costBasis;
+                    const plPercent = (pl / costBasis) * 100;
+                    
+                    holdings.innerHTML += `
+                        <div class="holding">
+                            <span>${symbol} (${stock.shares.toFixed(3)} shares)</span>
+                            <span class="${pl >= 0 ? 'positive' : 'negative'}">
+                                $${currentValue.toFixed(0)} (${pl >= 0 ? '+' : ''}${pl.toFixed(0)})
+                            </span>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function buyStock(symbol) {
+            const stock = stocks[symbol];
+            const cost = stock.price;
+
+            if (portfolio.cash >= cost) {
+                portfolio.cash -= cost;
+                stock.shares++;
+                
+                logEvent(`📈 Bought 1 share of ${symbol} for $${cost.toFixed(2)}`);
+                updateDisplay();
+            } else {
+                logEvent(`❌ Insufficient funds to buy ${symbol}`);
+            }
+        }
+
+        function sellStock(symbol) {
+            const stock = stocks[symbol];
+            
+            if (stock.shares > 0) {
+                const revenue = stock.price;
+                portfolio.cash += revenue;
+                stock.shares--;
+                
+                logEvent(`📉 Sold 1 share of ${symbol} for $${revenue.toFixed(2)}`);
+                updateDisplay();
+            }
+        }
+
+        function logEvent(message) {
+            const eventLog = document.getElementById('eventLog');
+            const event = document.createElement('div');
+            event.className = 'event';
+            event.innerHTML = `
+                <div>${message}</div>
+                <div class="event-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            eventLog.insertBefore(event, eventLog.firstChild);
+
+            // Keep only last 10 events
+            while (eventLog.children.length > 10) {
+                eventLog.removeChild(eventLog.lastChild);
+            }
+        }
+
+        function resetGame() {
+            // Clear any running game
+            if (gameInterval) clearInterval(gameInterval);
+            
+            // Reset portfolio
+            portfolio.cash = 10000;
+            portfolio.initialValue = 10000;
+            portfolio.history = [10000];
+            
+            // Reset time
+            gameTime.day = 1;
+            gameTime.speed = 1;
+            
+            // Reset all stocks
+            const initialPrices = { AAPL: 150, GOOGL: 120, TSLA: 200, MSFT: 300, AMZN: 180 };
+            for (const symbol in stocks) {
+                stocks[symbol].shares = 0;
+                stocks[symbol].price = initialPrices[symbol];
+                stocks[symbol].history = [initialPrices[symbol]];
+                stocks[symbol].autoReinvest = false;
+            }
+            
+            // Reset chart data
+            chartData.portfolio = [10000];
+            chartData.stocks = {};
+
+            document.getElementById('eventLog').innerHTML = `
+                <div class="event">
+                    <div>Portfolio reset! New game started.</div>
+                    <div class="event-time">${new Date().toLocaleTimeString()}</div>
+                </div>
+            `;
+
+            // Reset UI
+            updateTimeDisplay();
+            document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.speed-btn[onclick="setSpeed(1)"]').classList.add('active');
+            
+            updateDisplay();
+            initChart();
+            setSpeed(1);
+        }
+
+        function goHome() {
+            window.location.href = '../index.html';
+        }
+
+        // Time system and market simulation
+        let gameInterval;
+        
+        function setSpeed(speed) {
+            gameTime.speed = speed;
+            
+            // Update UI
+            document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Clear existing interval
+            if (gameInterval) clearInterval(gameInterval);
+            
+            // Set new interval based on speed (1 second = 1 day in game)
+            if (speed > 0) {
+                gameInterval = setInterval(advanceTime, 1000 / speed);
+            }
+        }
+        
+        function advanceTime() {
+            gameTime.day++;
+            updateTimeDisplay();
+            
+            // Random market fluctuations
+            if (Math.random() < 0.4) { // 40% chance each day
+                const symbols = Object.keys(stocks);
+                const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
+                const randomChange = (Math.random() - 0.5) * 0.08; // ±4% daily change
+                
+                applyPriceChange(randomSymbol, randomChange);
+            }
+            
+            // Pay dividends every 30 days
+            if (gameTime.day % 30 === 0) {
+                payDividends();
+            }
+            
+            // Update portfolio history
+            updatePortfolioHistory();
+            updateChart();
+        }
+        
+        function updateTimeDisplay() {
+            document.getElementById('timeDisplay').textContent = `Day ${gameTime.day}`;
+        }
+        
+        function applyPriceChange(symbol, changePercent) {
+            const oldPrice = stocks[symbol].price;
+            stocks[symbol].price = Math.max(1, oldPrice * (1 + changePercent));
+            stocks[symbol].history.push(stocks[symbol].price);
+            
+            // Keep only last 100 days of history
+            if (stocks[symbol].history.length > 100) {
+                stocks[symbol].history.shift();
+            }
+            
+            updateDisplay();
+        }
+        
+        function payDividends() {
+            Object.keys(stocks).forEach(symbol => {
+                const stock = stocks[symbol];
+                if (stock.shares > 0 && stock.dividend > 0) {
+                    const dividendAmount = stock.shares * stock.dividend;
+                    
+                    if (stock.autoReinvest) {
+                        // Auto-reinvest dividends
+                        const sharesToBuy = dividendAmount / stock.price;
+                        stock.shares += sharesToBuy;
+                        logEvent(`💰 ${symbol}: $${dividendAmount.toFixed(2)} dividend auto-reinvested (+${sharesToBuy.toFixed(3)} shares)`);
+                    } else {
+                        // Add to cash
+                        portfolio.cash += dividendAmount;
+                        logEvent(`💰 ${symbol}: $${dividendAmount.toFixed(2)} dividend received`);
+                    }
+                }
+            });
+            updateDisplay();
+        }
+        
+        function updatePortfolioHistory() {
+            const currentValue = calculatePortfolioValue();
+            portfolio.history.push(currentValue);
+            chartData.portfolio.push(currentValue);
+            
+            // Keep only last 100 days
+            if (portfolio.history.length > 100) {
+                portfolio.history.shift();
+                chartData.portfolio.shift();
+            }
+        }
+        
+        function initChart() {
+            const canvas = document.getElementById('chartCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            updateChart();
+        }
+        
+        function updateChart() {
+            const canvas = document.getElementById('chartCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (portfolio.history.length < 2) return;
+            
+            const padding = 60;
+            const width = canvas.width - 2 * padding;
+            const height = canvas.height - 2 * padding;
+            
+            // Find min/max values including stock values
+            let allValues = [...portfolio.history];
+            Object.keys(stocks).forEach(symbol => {
+                const stock = stocks[symbol];
+                if (stock.shares > 0 && stock.history.length > 1) {
+                    const stockValues = stock.history.slice(-portfolio.history.length).map(price => price * stock.shares);
+                    allValues = allValues.concat(stockValues);
+                }
+            });
+            
+            let minValue = Math.min(...allValues);
+            let maxValue = Math.max(...allValues);
+            const range = maxValue - minValue || 1;
+            
+            // Add padding to the range
+            minValue -= range * 0.1;
+            maxValue += range * 0.1;
+            const adjustedRange = maxValue - minValue;
+            
+            // Draw background grid
+            ctx.strokeStyle = '#f0f0f0';
+            ctx.lineWidth = 1;
+            
+            // Horizontal grid lines
+            for (let i = 1; i < 5; i++) {
+                const y = padding + (i / 5) * height;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Vertical grid lines
+            const timeSteps = Math.min(5, portfolio.history.length - 1);
+            for (let i = 1; i < timeSteps; i++) {
+                const x = padding + (i / timeSteps) * width;
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, canvas.height - padding);
+                ctx.stroke();
+            }
+            
+            // Draw main axes
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+            
+            // Draw portfolio line (thick black line)
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            for (let i = 0; i < portfolio.history.length; i++) {
+                const x = padding + (i / Math.max(1, portfolio.history.length - 1)) * width;
+                const y = canvas.height - padding - ((portfolio.history[i] - minValue) / adjustedRange) * height;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // Draw stock lines for owned stocks
+            const stockColors = {
+                'AAPL': '#28a745',  // Green
+                'GOOGL': '#dc3545', // Red  
+                'TSLA': '#ffc107',  // Yellow
+                'MSFT': '#17a2b8',  // Blue
+                'AMZN': '#6f42c1'   // Purple
+            };
+            
+            Object.keys(stocks).forEach(symbol => {
+                const stock = stocks[symbol];
+                if (stock.shares > 0 && stock.history.length > 1) {
+                    const color = stockColors[symbol];
+                    const stockHistory = stock.history.slice(-portfolio.history.length);
+                    
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    
+                    for (let i = 0; i < stockHistory.length; i++) {
+                        const value = stockHistory[i] * stock.shares;
+                        const x = padding + (i / Math.max(1, stockHistory.length - 1)) * width;
+                        const y = canvas.height - padding - ((value - minValue) / adjustedRange) * height;
+                        
+                        if (i === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    }
+                    ctx.stroke();
+                }
+            });
+            
+            // Draw Y-axis labels (price values)
+            ctx.fillStyle = '#666';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            
+            for (let i = 0; i <= 5; i++) {
+                const value = minValue + (adjustedRange * i / 5);
+                const y = canvas.height - padding - (i / 5) * height;
+                ctx.fillText(`$${(value / 1000).toFixed(0)}K`, padding - 8, y);
+            }
+            
+            // Draw X-axis labels (time)
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            
+            const startDay = Math.max(1, gameTime.day - portfolio.history.length + 1);
+            for (let i = 0; i <= Math.min(4, portfolio.history.length - 1); i++) {
+                const day = startDay + Math.floor(i * (portfolio.history.length - 1) / 4);
+                const x = padding + (i / 4) * width;
+                ctx.fillText(`Day ${day}`, x, canvas.height - padding + 8);
+            }
+            
+            // Draw axis labels
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillStyle = '#333';
+            
+            // Y-axis label
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center';
+            ctx.fillText('Portfolio Value', 0, 0);
+            ctx.restore();
+            
+            // X-axis label
+            ctx.textAlign = 'center';
+            ctx.fillText('Time (Days)', canvas.width / 2, canvas.height - 10);
+            
+            // Draw legend
+            let legendY = padding + 10;
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'left';
+            
+            // Portfolio line legend
+            ctx.fillStyle = '#000';
+            ctx.fillRect(canvas.width - padding - 100, legendY, 15, 2);
+            ctx.fillText('Total Portfolio', canvas.width - padding - 80, legendY + 5);
+            legendY += 18;
+            
+            // Stock legends for owned stocks
+            Object.keys(stocks).forEach(symbol => {
+                const stock = stocks[symbol];
+                if (stock.shares > 0) {
+                    ctx.fillStyle = stockColors[symbol];
+                    ctx.fillRect(canvas.width - padding - 100, legendY, 15, 2);
+                    ctx.fillText(`${symbol} Holdings`, canvas.width - padding - 80, legendY + 5);
+                    legendY += 18;
+                }
+            });
+        }
+        
+        function triggerGlobalMarketEvent() {
+            const globalEvents = [
+                { text: '📊 Federal Reserve cuts interest rates significantly', impact: 0.12 },
+                { text: '📈 GDP growth exceeds expectations by wide margin', impact: 0.08 },
+                { text: '⚠️ Inflation spikes to concerning levels', impact: -0.09 },
+                { text: '🏦 Major banking crisis unfolds', impact: -0.15 },
+                { text: '🌍 Historic trade agreement signed', impact: 0.07 },
+                { text: '💸 Currency crashes amid economic turmoil', impact: -0.11 },
+                { text: '🏭 Manufacturing boom drives economy', impact: 0.06 },
+                { text: '⚡ Severe energy crisis triggers recession fears', impact: -0.13 },
+                { text: '🚀 Major technological breakthrough announced', impact: 0.10 },
+                { text: '💥 Geopolitical tensions escalate dramatically', impact: -0.08 },
+                { text: '🎯 Central bank announces massive stimulus', impact: 0.14 },
+                { text: '📉 Market crash spreads globally', impact: -0.18 },
+                { text: '🛡️ New regulations shake financial markets', impact: -0.07 },
+                { text: '💰 Corporate tax cuts boost investor confidence', impact: 0.09 }
+            ];
+            
+            const event = globalEvents[Math.floor(Math.random() * globalEvents.length)];
+            
+            // Apply to all stocks with significant variation
+            Object.keys(stocks).forEach(symbol => {
+                applyPriceChange(symbol, event.impact * (0.3 + Math.random() * 1.4)); // Much more randomness (30%-170% of base impact)
+            });
+            
+            logEvent(`🌐 GLOBAL: ${event.text}`);
+        }
+        
+        function triggerIndustryEvents() {
+            const industryEvents = {
+                'AAPL': [
+                    { text: '📱 Revolutionary iPhone technology shocks market', impact: 0.16 },
+                    { text: '⚠️ Severe chip shortage cripples production', impact: -0.12 },
+                    { text: '🔋 Game-changing battery breakthrough unveiled', impact: 0.18 },
+                    { text: '📵 Smartphone demand collapses globally', impact: -0.10 },
+                    { text: '🚀 Apple enters new revolutionary market', impact: 0.14 },
+                    { text: '💥 Major product recall damages reputation', impact: -0.13 },
+                    { text: '🎯 Record-breaking quarterly earnings', impact: 0.11 },
+                    { text: '⚖️ Antitrust lawsuit threatens breakup', impact: -0.15 }
+                ],
+                'GOOGL': [
+                    { text: '🤖 AI revolution creates massive market shift', impact: 0.20 },
+                    { text: '📢 Digital advertising market explodes', impact: 0.13 },
+                    { text: '🛡️ Massive privacy scandal erupts', impact: -0.14 },
+                    { text: '☁️ Cloud computing dominance solidified', impact: 0.15 },
+                    { text: '💥 Search algorithm faces major disruption', impact: -0.11 },
+                    { text: '🎯 Quantum computing breakthrough achieved', impact: 0.17 },
+                    { text: '⚖️ Government forces major restructuring', impact: -0.16 },
+                    { text: '🚀 New AI product revolutionizes industry', impact: 0.12 }
+                ],
+                'TSLA': [
+                    { text: '🔌 Global EV infrastructure boom accelerates', impact: 0.22 },
+                    { text: '🏭 Manufacturing crisis hits auto industry hard', impact: -0.16 },
+                    { text: '⚡ Battery technology makes gas cars obsolete', impact: 0.19 },
+                    { text: '🚗 Legacy automakers flood EV market', impact: -0.13 },
+                    { text: '🚀 SpaceX partnership creates new markets', impact: 0.15 },
+                    { text: '💥 Safety concerns trigger investigations', impact: -0.17 },
+                    { text: '🎯 Autonomous driving achieves full approval', impact: 0.25 },
+                    { text: '⚠️ Production delays disappoint investors', impact: -0.12 }
+                ],
+                'MSFT': [
+                    { text: '💼 Enterprise software dominance expands', impact: 0.14 },
+                    { text: '☁️ Cloud wars intensify with price cuts', impact: -0.09 },
+                    { text: '🎮 Gaming revolution drives massive growth', impact: 0.12 },
+                    { text: '🔒 Major cybersecurity breach shakes confidence', impact: -0.11 },
+                    { text: '🤖 AI integration transforms all products', impact: 0.18 },
+                    { text: '💥 Antitrust concerns grow over market power', impact: -0.13 },
+                    { text: '🎯 Azure becomes clear cloud leader', impact: 0.16 },
+                    { text: '⚠️ Competition threatens Office dominance', impact: -0.08 }
+                ],
+                'AMZN': [
+                    { text: '📦 E-commerce revolution reaches new heights', impact: 0.17 },
+                    { text: '📦 Logistics crisis cripples deliveries', impact: -0.14 },
+                    { text: '🏪 Retail apocalypse accelerates market share', impact: 0.13 },
+                    { text: '👥 Labor strikes paralyze operations', impact: -0.12 },
+                    { text: '🚀 AWS dominance grows exponentially', impact: 0.15 },
+                    { text: '💥 Regulatory crackdown threatens business model', impact: -0.16 },
+                    { text: '🎯 Prime membership hits record milestones', impact: 0.11 },
+                    { text: '⚠️ Rising costs squeeze profit margins', impact: -0.10 }
+                ]
+            };
+            
+            // Apply events only to held stocks
+            Object.keys(stocks).forEach(symbol => {
+                const stock = stocks[symbol];
+                if (stock.shares > 0) {
+                    const events = industryEvents[symbol];
+                    const randomEvent = events[Math.floor(Math.random() * events.length)];
+                    
+                    applyPriceChange(symbol, randomEvent.impact);
+                    
+                    const changePercent = (randomEvent.impact * 100).toFixed(1);
+                    const changeText = randomEvent.impact > 0 ? `+${changePercent}%` : `${changePercent}%`;
+                    
+                    logEvent(`🏭 INDUSTRY: ${randomEvent.text} - ${symbol} ${changeText}`);
+                }
+            });
+        }
+
+        // Make chart responsive to manual events
+        function triggerEvent(symbol) {
+            const stockEvents = events[symbol];
+            const randomEvent = stockEvents[Math.floor(Math.random() * stockEvents.length)];
+            
+            applyPriceChange(symbol, randomEvent.impact);
+            
+            const changePercent = (randomEvent.impact * 100).toFixed(1);
+            const changeText = randomEvent.impact > 0 ? `+${changePercent}%` : `${changePercent}%`;
+            
+            logEvent(`${randomEvent.text} - ${symbol} ${changeText}`);
+            
+            // Update chart immediately for manual events
+            updateChart();
+        }
+
+        // Initialize
+        initChart();
+        setSpeed(1); // Start with normal speed
+        updateDisplay();
+    </script>
+</body>
+</html>
