@@ -23,6 +23,12 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+/* Performance optimizations */
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background-color: var(--background);
@@ -31,19 +37,21 @@ body {
     font-size: 16px;
     font-weight: 400;
     letter-spacing: -0.02em;
+    transform: translateZ(0); /* Force hardware acceleration */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 
 /* Clean Header */
 .pixel-header {
-    background: var(--background);
+    background: rgba(255, 255, 255, 0.95);
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
     height: var(--header-height);
     border-bottom: var(--pixel-size) solid var(--border);
-    backdrop-filter: blur(10px);
 }
 
 .pixel-nav {
@@ -200,25 +208,28 @@ body {
     margin-top: 3rem;
 }
 
-.project-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    max-width: 1000px;
-    margin: 0 auto;
-}
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-.project-card {
-    background: var(--background);
-    border: 2px solid var(--border);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    aspect-ratio: 3/2;
-    display: flex;
-    flex-direction: column;
-}
+        .project-card {
+            background: var(--background);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            aspect-ratio: 1;
+            display: grid;
+            grid-template-rows: 1fr auto;
+            position: relative;
+            will-change: transform;
+            transform: translateZ(0); /* Force hardware acceleration */
+        }
 
 .project-card:hover {
     border-color: var(--text);
@@ -226,27 +237,49 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.project-image {
-    flex: 1;
-    background: var(--surface);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .project-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--surface);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.project-image svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+        .ai-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            z-index: 10;
+            letter-spacing: 0.3px;
+        }
 
-.project-content {
-    padding: 1rem;
-    background: var(--background);
-    border-top: 1px solid var(--border);
-}
+        .project-image svg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            shape-rendering: optimizeSpeed; /* Optimize SVG rendering */
+            image-rendering: optimizeSpeed;
+        }
+
+        .project-content {
+            position: relative;
+            z-index: 5;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 80%, transparent 100%);
+            margin-top: auto;
+            will-change: transform;
+        }
 
 .project-header {
     display: flex;
@@ -255,12 +288,14 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.project-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.01em;
-}
+        .project-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+            line-height: 1.3;
+        }
 
 .project-year {
     font-size: 12px;
@@ -268,12 +303,13 @@ body {
     font-weight: 400;
 }
 
-.project-description {
-    font-size: 14px;
-    line-height: 1.4;
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
-}
+        .project-description {
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+        }
 
 .project-tech {
     display: flex;
@@ -432,6 +468,62 @@ textarea.form-input {
     text-align: center;
 }
 
+/* Contact Section */
+.contact-container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.contact-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+.contact-link:hover {
+    border-color: var(--text);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.contact-icon {
+    font-size: 32px;
+    margin-bottom: 0.5rem;
+}
+
+.contact-info {
+    text-align: center;
+}
+
+.contact-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+}
+
+.contact-value {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .project-grid {
@@ -442,6 +534,11 @@ textarea.form-input {
     .about-content {
         grid-template-columns: 1fr;
         gap: 2rem;
+    }
+    
+    .contact-links {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
     
     .pixel-nav {
