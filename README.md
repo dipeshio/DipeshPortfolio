@@ -2,7 +2,7 @@
 
 A minimalist personal portfolio showcasing interactive projects and development work. Built with modern web technologies and optimized for performance.
 
-**Live Site:** [dipeshio.github.io/DipeshPortfolio](https://dipeshio.github.io/DipeshPortfolio)
+**Live Site:** [dipeshio.me](https://dipeshio.me)
 
 ## Projects
 
